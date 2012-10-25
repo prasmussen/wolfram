@@ -61,7 +61,8 @@ function isActionMethod(signature) {
 function stripContext(name) {
     return name
         .replace("context", "ctx")
-        .replace(", ctx", "");
+        .replace(", ctx", "")
+        .replace("ctx", "");
 }
 
 function list(ctx) {

@@ -1,5 +1,5 @@
 # Files with api keys and passwords
-*.config
+wolfram.config
 setup-couchdb.sh
 
 # vim files

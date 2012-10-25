@@ -1,0 +1,23 @@
+{
+    "couchdb": {
+        "url": "http://couchdb01",
+        "port": 5984,
+        "database": "wolfram",
+        "user": "wolfram",
+        "password": "SECRET"
+    },
+
+    "irc": {
+        "server": "irc.homelien.no",
+        "nick": "wolfram",
+        "channels": ["#wolfram"],
+        "username": "wolfram",
+        "realname": "wolfram"
+    },
+
+    "actions": {
+        "wolframalpha": {
+            "appid": "SECRET-APP-ID"
+        }
+    }
+}

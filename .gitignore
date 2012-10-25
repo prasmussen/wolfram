@@ -1,0 +1,9 @@
+# Files with api keys and passwords
+*.config
+setup-couchdb.sh
+
+# vim files
+.*.sw[a-z]
+*.un~
+Session.vim
+.netrwhist

@@ -40,8 +40,8 @@ function start(name, minutes, ctx) {
 }
 
 function _start(timer, ctx) {
-    // Start timer, add timeoutId attribute and push the timer object to the global timers array
-    timer.timeoutId = setTimeout2(timerCompleted, remainingDuration(timer));
+    // Start timer, add cancel function and push the timer object to the global timers array
+    timer.cancel = setTimeout2(timerCompleted, remainingDuration(timer));
     timers.push(timer);
 
     // If there is a callback it means that this is a "live" request (i.e. not restored from the db).
@@ -73,7 +73,7 @@ function cancel(name, ctx) {
     if (!timer) {
         return ctx.callback(sprintf("Timer '%s' not found", name));
     }
-    clearTimeout(timer.timeoutId);
+    timer.cancel();
     markAsCompleted(timer, ctx, function() {
         ctx.callback(sprintf("Timer '%s' is canceled", name));
     });
@@ -92,19 +92,29 @@ function list(ctx) {
 
 // Helper functions
 
-// Set timeout replacement with no signed 32-bit limit
-function setTimeout2(callback, duration) {
+// setTimeout replacement with no signed 32-bit limit
+// returns cancel function instead of an id
+function setTimeout2() {
     var max = Math.pow(2, 32) / 2 - 1;
-    var remaining = 0;
+    var currentId;
 
-    if (duration > max) {
-        remaining = duration - max;
-        duration = max % duration;
+    function st(callback, duration) {
+        var remaining = 0;
+
+        if (duration > max) {
+            remaining = duration - max;
+            duration = max % duration;
+        }
+
+        currentId = setTimeout(function() {
+            return (remaining > 0) ? st(callback, remaining) : callback();
+        }, duration);
     }
-
-    setTimeout(function() {
-        return (remaining > 0) ? setTimeout2(callback, remaining) : callback();
-    }, duration);
+    st.apply(this, arguments);
+    
+    return function() {
+        clearTimeout(currentId);
+    };
 }
 
 function remainingDuration(timer) {

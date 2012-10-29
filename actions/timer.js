@@ -41,7 +41,7 @@ function start(name, minutes, ctx) {
 
 function _start(timer, ctx) {
     // Start timer, add timeoutId attribute and push the timer object to the global timers array
-    timer.timeoutId = setTimeout(timerCompleted, remainingDuration(timer));
+    timer.timeoutId = setTimeout2(timerCompleted, remainingDuration(timer));
     timers.push(timer);
 
     // If there is a callback it means that this is a "live" request (i.e. not restored from the db).
@@ -91,6 +91,22 @@ function list(ctx) {
 }
 
 // Helper functions
+
+// Set timeout replacement with no signed 32-bit limit
+function setTimeout2(callback, duration) {
+    var max = Math.pow(2, 32) / 2 - 1;
+    var remaining = 0;
+
+    if (duration > max) {
+        remaining = duration - max;
+        duration = max % duration;
+    }
+
+    setTimeout(function() {
+        return (remaining > 0) ? setTimeout2(callback, remaining) : callback();
+    }, duration);
+}
+
 function remainingDuration(timer) {
     return (timer.start + timer.duration) - Date.now();
 }
@@ -100,7 +116,7 @@ function completionDate(timer) {
 }
 
 function formatDate(d) {
-    return sprintf("%04d-%02d-%02d %02d:%02d:%02d", d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds());
+    return sprintf("%04d-%02d-%02d %02d:%02d:%02d", d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds());
 }
 
 function markAsCompleted(timer, ctx, callback) {

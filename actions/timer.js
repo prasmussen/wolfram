@@ -68,20 +68,20 @@ function _start(timer, ctx) {
     }
 }
 
-function cancel(name, ctx) {
-    var timer = findTimerWithName(name);
+function cancel(index, ctx) {
+    var timer = timers[index];
     if (!timer) {
-        return ctx.callback(sprintf("Timer '%s' not found", name));
+        return ctx.callback("Invalid timer index");
     }
     timer.cancel();
     markAsCompleted(timer, ctx, function() {
-        ctx.callback(sprintf("Timer '%s' is canceled", name));
+        ctx.callback(sprintf("Timer '%s' is canceled", timer.name));
     });
 }
 
 function list(ctx) {
-    var result = timers.map(function(timer) {
-        return sprintf("<%s> %s %s", timer.owner, timer.name, formatDate(completionDate(timer)));
+    var result = timers.map(function(timer, index) {
+        return sprintf("[%d] <%s> %s %s", index, timer.owner, timer.name, formatDate(completionDate(timer)));
     });
 
     if (result.length === 0) {
@@ -134,28 +134,17 @@ function markAsCompleted(timer, ctx, callback) {
         if (err) {
             console.log(err);
         }
-        deleteTimerWithName(timer.name);
+        deleteTimer(timer._id);
         if (callback) {
             callback();
         }
     });
 }
 
-function deleteTimerWithName(name) {
+function deleteTimer(id) {
     timers = timers.filter(function(timer) {
-        return timer.name !== name;
+        return timer._id !== id;
     });
-}
-
-function findTimerWithName(name) {
-    var matches = timers.filter(function(timer) {
-        return timer.name === name;
-    });
-
-    if (matches.length > 0) {
-        return matches[0];
-    }
-    return null;
 }
 
 module.exports = {

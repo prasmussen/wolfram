@@ -98,6 +98,9 @@ function _start(timer, ctx) {
 }
 
 function cancel(index, ctx) {
+    if (index.toLowerCase() == "last") {
+        index = timers.length - 1;
+    }
     var timer = timers[index];
     if (!timer) {
         return ctx.callback("Invalid timer index");

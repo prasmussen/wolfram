@@ -16,12 +16,12 @@ function init(ctx) {
     });
 }
 
-function start(name, minutes, ctx) {
+function start(name, duration, ctx) {
     var timer = {
         type: "timer",
         name: name,
         start: Date.now(),
-        duration: parseInt(minutes, 10) * 60 * 1000,
+        duration: _parseDuration(duration),
         owner: ctx.req.source.nick,
         replyTo: ctx.req.replyTo,
         req: ctx.req._id,
@@ -37,6 +37,35 @@ function start(name, minutes, ctx) {
         // Start timer
         _start(timer, ctx);
     });
+}
+
+function _parseDuration(duration) {
+    var t = {
+        s: 1000,
+        m: 1000 * 60,
+        h: 1000 * 60 * 60,
+        d: 1000 * 60 * 60 * 24,
+        w: 1000 * 60 * 60 * 24 * 7,
+        y: 1000 * 60 * 60 * 24 * 7 * 52
+    }
+    
+    // Backwards compatibility
+    if (!isNaN(duration)) {
+        return parseInt(duration, 10) * t.m;
+    }
+    
+    var re = /^(?:(\d+)y)?(?:(\d+)w)?(?:(\d+)d)?(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i;
+    var time = re.exec(duration);
+    
+    var sum = 0;
+    sum += t.y * (time[1] || 0);
+    sum += t.w * (time[2] || 0);
+    sum += t.d * (time[3] || 0);
+    sum += t.h * (time[4] || 0);
+    sum += t.m * (time[5] || 0);
+    sum += t.s * (time[6] || 0);
+    
+    return sum;
 }
 
 function _start(timer, ctx) {

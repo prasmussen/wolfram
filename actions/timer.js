@@ -46,7 +46,7 @@ function _parseDuration(duration) {
         h: 1000 * 60 * 60,
         d: 1000 * 60 * 60 * 24,
         w: 1000 * 60 * 60 * 24 * 7,
-        y: 1000 * 60 * 60 * 24 * 7 * 52
+        y: 1000 * 60 * 60 * 24 * 365
     }
     
     // Backwards compatibility

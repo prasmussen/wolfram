@@ -1,0 +1,30 @@
+{
+  "name": "wolfram",
+  "version": "1.0.0",
+  "description": "irc bot",
+  "url": "https://github.com/prasmussen/wolfram",
+  "author": {
+    "name": "Petter Rasmussen"
+  },
+  "contributors": [
+    {
+      "name": "Oddbjørn Haaland",
+      "email": "oddbjorn.haaland@gmail.com"
+    },
+    {
+      "name": "Sander Struijk",
+      "email": "sander.struijk@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "cradle": "0.6.4",
+    "entities": "0.1.1",
+    "google": "0.1.0",
+    "imdb-api": "1.2.0",
+    "irc": "0.3.4",
+    "moment": "2.4.0",
+    "request": "2.11.4",
+    "require-all": "0.0.4",
+    "sprintf": "0.1.1"
+  }
+}

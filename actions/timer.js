@@ -43,7 +43,7 @@ function start(name, duration, ctx) {
 function _getDuration(duration) {
     var parsedDuration = _parseDuration(duration);
     if (parsedDuration === 0) {
-        parsedDuration = _parseDateTime(duration);
+        parsedDuration = _parseDateTime(duration, moment());
     }
     return parsedDuration;
 }
@@ -80,8 +80,8 @@ function _parseDuration(duration) {
     return sum;
 }
 
-function _parseDateTime(dateTime){
-    var re = /^(?:Y+(\d+))?(?:M+(\d+))?(?:d+(\d+))?(?:h+(\d+))?(?:m+(\d+))?(?:s+(\d+))?$/;
+function _parseDateTime(dateTime, now){
+    var re = /^(?:Y?(\d+))?(?:M?(\d+))?(?:d?(\d+))?(?:h?(\d+))?(?:m?(\d+))?(?:s?(\d+))?$/;
     var time = re.exec(dateTime);
 
     var duration = 0;
@@ -95,16 +95,49 @@ function _parseDateTime(dateTime){
         var minutes = time[5] || 0;
         var seconds = time[6] || 0;
 
-        var mom = moment();
+        console.log(' years: ' + years + 
+                    ' months: ' + months + 
+                    ' days: ' + days + 
+                    ' hours: ' + hours + 
+                    ' minutes: ' + minutes + 
+                    ' seconds: ' + seconds);
+
+        var mom = moment(now);
+
         if (years !== 0) mom.years(years);
-        if (months !== 0) mom.months(months);
-        if (days !== 0) mom.days(days);
-        if (hours !== 0) mom.hours(hours);
-        mom.minutes(minutes);
-        mom.seconds(seconds);
+        if (months !== 0) {
+            if (mom.months > months){
+                mom.add('years', 1);
+            }
+            mom.months(months);
+        }
+        if (days !== 0) {
+            if (mom.days > days){
+                mom.add('months', 1);
+            }
+            mom.days(days);
+        }
+        if (hours !== 0) {
+            if (mom.hours > hours){
+                mom.add('days', 1);
+            }
+            mom.hours(hours);
+        }
+        if (minutes !== 0) {
+            if (mom.minutes > minutes){
+                mom.add('hours', 1);
+            }
+            mom.minutes(minutes);
+        }
+        if (seconds !== 0) {
+            if (mom.seconds > seconds) {
+                mom.add('minutes', 1);
+            }
+            mom.seconds(seconds);
+        }
 
         // unix() returns seconds since year 0 so we multiply with 1000 to get milliseconds.
-        duration = (mom.unix() - moment().unix()) * 1000;
+        duration = (mom.unix() - now.unix()) * 1000;
         return duration;
     }
 
@@ -226,5 +259,10 @@ module.exports = {
     init: init,
     start: start,
     list: list,
-    cancel: cancel
+    cancel: cancel,
+    privates: {
+        _getDuration: _getDuration,
+        _parseDuration: _parseDuration,
+        _parseDateTime: _parseDateTime
+    }
 };

@@ -88,18 +88,18 @@ function _parseDateTime(dateTime){
 
     if (time) {
 
-        var years =   time[1] || null;
-        var months =  time[2] || null;
-        var days =    time[3] || null;
-        var hours =   time[4] || null;
+        var years =   time[1] || 0;
+        var months =  time[2] || 0;
+        var days =    time[3] || 0;
+        var hours =   time[4] || 0;
         var minutes = time[5] || 0;
         var seconds = time[6] || 0;
 
         var mom = moment();
-        if (years !== null) mom.years(years);
-        if (months !== null) mom.months(months);
-        if (days !== null) mom.days(days);
-        if (hours !== null) mom.hours(hours);
+        if (years !== 0) mom.years(years);
+        if (months !== 0) mom.months(months);
+        if (days !== 0) mom.days(days);
+        if (hours !== 0) mom.hours(hours);
         mom.minutes(minutes);
         mom.seconds(seconds);
 

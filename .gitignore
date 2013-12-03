@@ -7,3 +7,7 @@ setup-couchdb.sh
 *.un~
 Session.vim
 .netrwhist
+
+# NPM
+node_modules/
+npm-debug.log

@@ -81,7 +81,7 @@ function _parseDuration(duration) {
 }
 
 function _parseDateTime(dateTime){
-    var re = /^(?:Y+(\d+))?(?:W+(\d+))?(?:D+(\d+))?(?:H+(\d+))?(?:M+(\d+))?(?:S+(\d+))?$/i;
+    var re = /^(?:Y+(\d+))?(?:M+(\d+))?(?:d+(\d+))?(?:h+(\d+))?(?:m+(\d+))?(?:s+(\d+))?$/;
     var time = re.exec(dateTime);
 
     var duration = 0;

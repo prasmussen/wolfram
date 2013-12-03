@@ -1,4 +1,5 @@
 var sprintf = require("sprintf").sprintf;
+var moment = require("moment");
 
 var timers = [];
 
@@ -21,7 +22,7 @@ function start(name, duration, ctx) {
         type: "timer",
         name: name,
         start: Date.now(),
-        duration: _parseDuration(duration),
+        duration: _getDuration(duration),
         owner: ctx.req.source.nick,
         replyTo: ctx.req.replyTo,
         req: ctx.req._id,
@@ -37,6 +38,14 @@ function start(name, duration, ctx) {
         // Start timer
         _start(timer, ctx);
     });
+}
+
+function _getDuration(duration) {
+    var parsedDuration = _parseDuration(duration);
+    if (parsedDuration === 0) {
+        parsedDuration = _parseDateTime(duration);
+    }
+    return parsedDuration;
 }
 
 function _parseDuration(duration) {
@@ -58,14 +67,48 @@ function _parseDuration(duration) {
     var time = re.exec(duration);
     
     var sum = 0;
-    sum += t.y * (time[1] || 0);
-    sum += t.w * (time[2] || 0);
-    sum += t.d * (time[3] || 0);
-    sum += t.h * (time[4] || 0);
-    sum += t.m * (time[5] || 0);
-    sum += t.s * (time[6] || 0);
+    
+    if (time) {
+        sum += t.y * (time[1] || 0);
+        sum += t.w * (time[2] || 0);
+        sum += t.d * (time[3] || 0);
+        sum += t.h * (time[4] || 0);
+        sum += t.m * (time[5] || 0);
+        sum += t.s * (time[6] || 0);
+    }
     
     return sum;
+}
+
+function _parseDateTime(dateTime){
+    var re = /^(?:Y+(\d+))?(?:W+(\d+))?(?:D+(\d+))?(?:H+(\d+))?(?:M+(\d+))?(?:S+(\d+))?$/i;
+    var time = re.exec(dateTime);
+
+    var duration = 0;
+
+    if (time) {
+
+        var years =   time[1] || null;
+        var months =  time[2] || null;
+        var days =    time[3] || null;
+        var hours =   time[4] || null;
+        var minutes = time[5] || 0;
+        var seconds = time[6] || 0;
+
+        var mom = moment();
+        if (years !== null) mom.years(years);
+        if (months !== null) mom.months(months);
+        if (days !== null) mom.days(days);
+        if (hours !== null) mom.hours(hours);
+        mom.minutes(minutes);
+        mom.seconds(seconds);
+
+        // unix() returns seconds since year 0 so we multiply with 1000 to get milliseconds.
+        duration = (mom.unix() - moment().unix()) * 1000;
+        return duration;
+    }
+
+    return duration;
 }
 
 function _start(timer, ctx) {

@@ -44,7 +44,11 @@ function start(name, duration, ctx) {
 function _getDuration(duration) {
     var parsedDuration = _parseDuration(duration);
     if (parsedDuration === 0) {
-        parsedDuration = _parseDateTime(duration, moment());
+        try{
+            parsedDuration = _parseDateTime(duration, moment());
+        } catch(e) {
+            sprintf(e.message);
+        }
     }
     return parsedDuration;
 }

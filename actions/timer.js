@@ -59,11 +59,6 @@ function _parseDuration(duration) {
         y: 1000 * 60 * 60 * 24 * 365
     }
     
-    // Backwards compatibility
-    if (!isNaN(duration)) {
-        return parseInt(duration, 10) * t.m;
-    }
-    
     var re = /^(?:(\d+)y)?(?:(\d+)w)?(?:(\d+)d)?(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i;
     var time = re.exec(duration);
     

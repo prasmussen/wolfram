@@ -97,15 +97,15 @@ function _parseDateTime(dateTime, now){
         seconds = time[6] || 0;
     }
     else {
-        re = /^(\d{1,2})[\/.\\-](\d{1,2})(?:[\/.\\-]((?:\d{2}|\d{4})))?(?:\D(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?$/;
+        re = /^(?:(?:(\d{1,2})[\/.\\-](\d{1,2})(?:[\/.\\-]((?:\d{2}|\d{4})))?(?:\D(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?)|(?:(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?))$/;
         time = re.exec(dateTime);
         if (time) {
             years = time[3] || 0;
             months = time[2] || 0;
             days = time[1] || 0;
-            hours = time[4] || 0;
-            minutes = time[5] || 0;
-            seconds = time[6] || 0;
+            hours = time[4] || time[7] || 0;
+            minutes = time[5] || time[8] || 0;
+            seconds = time[6] || time[9] || 0;
         }
     }
 
@@ -144,7 +144,7 @@ function _parseDateTime(dateTime, now){
         }
         if (days !== 0) {
             debug('days = ' + days);
-            if (moment({ M: future.months, d: days }).parsingFlags().overflow !== -1){
+            if (moment({ M: future.months(), d: days }).parsingFlags().overflow !== -1){
                 throw new Error('Days exceeded amount of days for month.');
             }
             else if (future.date() > days){

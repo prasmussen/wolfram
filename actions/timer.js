@@ -44,7 +44,7 @@ function _getDuration(duration) {
     var parsedDuration = _parseDuration(duration);
     if (parsedDuration === 0) {
         try{
-            parsedDuration = _parseDateTime(duration, moment());
+            parsedDuration = _parseDateTime(duration, moment({ h: 0, m: 0, s: 0 }));
         } catch(e) {
             sprintf(e.message);
         }
@@ -135,7 +135,7 @@ function _parseDateTime(dateTime, now){
             months = months - 1; //since months input is not indexed, we subtract 1.
             debug('months = ' + months);
             if (months >= 0 && months <= 11) {
-            debug('months is equal to or in between 0 and 11');
+                debug('months is equal to or in between 0 and 11');
                 if (future.months() > months){
                     debug('future.months is greater then months inputted, will add 1 year to future');
                     future.add('years', 1);
@@ -157,16 +157,17 @@ function _parseDateTime(dateTime, now){
             future.date(days);
         }
         if (hours !== 0) {
+            //hours = hours - 1; //since hours input is not indexed, we subtract 1.
             debug('hours = ' + hours);
-            if (hours < 24) {
-                debug('hours is less then 24');
+            if (hours >= 0 && hours <= 23) {
+                debug('hours is greater then or equal to 0 and less then or equal to 23');
                 if (future.hours() > hours){
                     debug('future.hours is greater then hours inputted, will add 1 day to future');
                     future.add('days', 1);
                 }
                 future.hours(hours);
             } else {
-                throw new Error('Hours can not be equal to or greater then 24.');
+                throw new Error('hours have to be greater then or equal to 0 or less then or equal to 23.');
             }
         }
         if (minutes !== 0) {

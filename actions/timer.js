@@ -95,49 +95,87 @@ function _parseDateTime(dateTime, now){
         var minutes = time[5] || 0;
         var seconds = time[6] || 0;
 
-        console.log(' years: ' + years + 
-                    ' months: ' + months + 
-                    ' days: ' + days + 
-                    ' hours: ' + hours + 
-                    ' minutes: ' + minutes + 
-                    ' seconds: ' + seconds);
+        var future = moment(now);
 
-        var mom = moment(now);
-
-        if (years !== 0) mom.years(years);
-        if (months !== 0) {
-            if (mom.months > months){
-                mom.add('years', 1);
+        if (years !== 0) {
+            debug('\nyears is not 0');
+            if (future.years() <= years){
+                debug('future.years is less or equal to years inputed');
+                future.years(years);
+            } else {
+                throw new Error('Year can not be set to the past.');
             }
-            mom.months(months);
+        }
+        if (months !== 0) {
+            // Note: Months are zero indexed, so January is month 0.
+            debug('\nmonths is not 0');
+            months = months - 1; //since months input is not indexed, we subtract 1.
+            if (months >= 0 && months <= 11) {
+            debug('months is equal to or in between 0 and 11');
+                if (future.months() > months){
+                    debug('future.months is greater then months inputed, will add 1 year to future');
+                    future.add('years', 1);
+                }
+                future.months(months);
+            } else {
+                throw new Error('Month can only be between 1 and 12.')
+            }
         }
         if (days !== 0) {
-            if (mom.days > days){
-                mom.add('months', 1);
+            debug('\ndays is not 0');
+            if (moment({ M: future.months, d: days }).parsingFlags().overflow !== -1){
+                throw new Error('Days exceeded amount of days for month.');
             }
-            mom.days(days);
+            else if (future.date() > days){
+                debug('future.days is greater then days inputed, will add 1 month to future');
+                future.add('months', 1);
+            }
+            future.date(days);
         }
         if (hours !== 0) {
-            if (mom.hours > hours){
-                mom.add('days', 1);
+            debug('\nhours is not 0');
+            if (hours < 24) {
+                debug('hours is less then 24');
+                if (future.hours() > hours){
+                    debug('future.hours is greater then hours inputed, will add 1 day to future');
+                    future.add('days', 1);
+                }
+                future.hours(hours);
+            } else {
+                throw new Error('Hours can not be equal to or greater then 24.');
             }
-            mom.hours(hours);
         }
         if (minutes !== 0) {
-            if (mom.minutes > minutes){
-                mom.add('hours', 1);
+            debug('\nminutes is not 0');
+            if (minutes < 60){
+                debug('minutes is less then 60');
+                if (future.minutes() > minutes){
+                    debug('future.minutes is greater then minutes inputed, will add 1 hour to future');
+                    future.add('hours', 1);
+                }
+                future.minutes(minutes);
+            } else {
+                throw new Error('Minutes can not be equal to or greater then 60.');
             }
-            mom.minutes(minutes);
         }
         if (seconds !== 0) {
-            if (mom.seconds > seconds) {
-                mom.add('minutes', 1);
+            debug('\nseconds is not 0');
+            if (seconds < 60) {
+                debug('seconds is less then 60');
+                if (future.seconds() > seconds) {
+                    debug('future.seconds is greater then seconds inputed, will add 1 minute to future');
+                    future.add('minutes', 1);
+                }
+                future.seconds(seconds);
+            } else {
+                throw new Error('Seconds can not exceed 60.');
             }
-            mom.seconds(seconds);
         }
 
+        debug(future.format());
+
         // unix() returns seconds since year 0 so we multiply with 1000 to get milliseconds.
-        duration = (mom.unix() - now.unix()) * 1000;
+        duration = (future.unix() - now.unix()) * 1000;
         return duration;
     }
 
@@ -255,12 +293,19 @@ function deleteTimer(id) {
     });
 }
 
+var shouldDebug = false;
+function debug(message){
+    if (shouldDebug)
+        console.log(message);
+}
+
 module.exports = {
     init: init,
     start: start,
     list: list,
     cancel: cancel,
     privates: {
+        debug: shouldDebug,
         _getDuration: _getDuration,
         _parseDuration: _parseDuration,
         _parseDateTime: _parseDateTime

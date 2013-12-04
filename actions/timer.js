@@ -2,7 +2,6 @@ var sprintf = require("sprintf").sprintf;
 var moment = require("moment");
 
 var timers = [];
-var shouldDebug = false;
 
 function init(ctx) {
     // Fetch all incomplete timers from database
@@ -318,9 +317,13 @@ function deleteTimer(id) {
     });
 }
 
+var shouldDebug = false;
 function debug(message){
     if (shouldDebug)
         console.log(message);
+}
+function enableDebug(){
+    shouldDebug = true;
 }
 
 module.exports = {
@@ -329,7 +332,7 @@ module.exports = {
     list: list,
     cancel: cancel,
     privates: {
-        debug: shouldDebug,
+        enableDebug: enableDebug,
         _getDuration: _getDuration,
         _parseDuration: _parseDuration,
         _parseDateTime: _parseDateTime

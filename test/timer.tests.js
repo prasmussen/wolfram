@@ -3,7 +3,7 @@ var should = require('should'),
 	timer = require('../actions/timer');
 
 describe('Timer', function(){
-	timer.privates.debug = true;
+//	timer.privates.enableDebug();
 	describe('getDuration', function(){
 		describe('_parseDuration', function(){
 			paramTest_parseDuration('10h', moment.duration(10, 'hours').asMilliseconds());

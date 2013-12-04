@@ -2,6 +2,7 @@ var sprintf = require("sprintf").sprintf;
 var moment = require("moment");
 
 var timers = [];
+var shouldDebug = false;
 
 function init(ctx) {
     // Fetch all incomplete timers from database
@@ -81,39 +82,64 @@ function _parseDuration(duration) {
 }
 
 function _parseDateTime(dateTime, now){
-    var re = /^(?:Y(\d+))?(?:M(\d+))?(?:d(\d+))?(?:h(\d+))?(?:m(\d+))?(?:s(\d+))?$/;
-    var time = re.exec(dateTime);
 
     var duration = 0;
+    var seconds;
+    var minutes;
+    var hours;
+    var days;
+    var months;
+    var years;
+
+    var re = /^(?:Y(\d+))?(?:M(\d+))?(?:d(\d+))?(?:h(\d+))?(?:m(\d+))?(?:s(\d+))?$/;
+    var time = re.exec(dateTime);
+    if (time) {
+        years = time[1] || 0;
+        months = time[2] || 0;
+        days = time[3] || 0;
+        hours = time[4] || 0;
+        minutes = time[5] || 0;
+        seconds = time[6] || 0;
+    }
+    else {
+        re = /^(\d{1,2})[\/.\\-](\d{1,2})(?:[\/.\\-]((?:\d{2}|\d{4})))?(?:\D(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?$/;
+        time = re.exec(dateTime);
+        if (time) {
+            years = time[3] || 0;
+            months = time[2] || 0;
+            days = time[1] || 0;
+            hours = time[4] || 0;
+            minutes = time[5] || 0;
+            seconds = time[6] || 0;
+        }
+    }
 
     if (time) {
-
-        var years =   time[1] || 0;
-        var months =  time[2] || 0;
-        var days =    time[3] || 0;
-        var hours =   time[4] || 0;
-        var minutes = time[5] || 0;
-        var seconds = time[6] || 0;
 
         var future = moment(now);
 
         if (years !== 0) {
-            debug('\nyears is not 0');
-            if (future.years() <= years){
-                debug('future.years is less or equal to years inputed');
-                future.years(years);
+            if (years.toString().length == 2) {
+                debug('years has only 2 digits and is set to ' + years);
+                var currentYear = future.years().toString();
+                years = parseInt(currentYear.substring(0,2) + years);
+            }
+            debug('years = ' + years);
+            if (future.years() > years){
+                throw new Error('Year can not be set to the past.\n' +
+                    'future.year = ' + future.years() + ', years = ' + years);
             } else {
-                throw new Error('Year can not be set to the past.');
+                future.years(years);
             }
         }
         if (months !== 0) {
             // Note: Months are zero indexed, so January is month 0.
-            debug('\nmonths is not 0');
             months = months - 1; //since months input is not indexed, we subtract 1.
+            debug('months = ' + months);
             if (months >= 0 && months <= 11) {
             debug('months is equal to or in between 0 and 11');
                 if (future.months() > months){
-                    debug('future.months is greater then months inputed, will add 1 year to future');
+                    debug('future.months is greater then months inputted, will add 1 year to future');
                     future.add('years', 1);
                 }
                 future.months(months);
@@ -122,22 +148,22 @@ function _parseDateTime(dateTime, now){
             }
         }
         if (days !== 0) {
-            debug('\ndays is not 0');
+            debug('days = ' + days);
             if (moment({ M: future.months, d: days }).parsingFlags().overflow !== -1){
                 throw new Error('Days exceeded amount of days for month.');
             }
             else if (future.date() > days){
-                debug('future.days is greater then days inputed, will add 1 month to future');
+                debug('future.days is greater then days inputted, will add 1 month to future');
                 future.add('months', 1);
             }
             future.date(days);
         }
         if (hours !== 0) {
-            debug('\nhours is not 0');
+            debug('hours = ' + hours);
             if (hours < 24) {
                 debug('hours is less then 24');
                 if (future.hours() > hours){
-                    debug('future.hours is greater then hours inputed, will add 1 day to future');
+                    debug('future.hours is greater then hours inputted, will add 1 day to future');
                     future.add('days', 1);
                 }
                 future.hours(hours);
@@ -146,11 +172,11 @@ function _parseDateTime(dateTime, now){
             }
         }
         if (minutes !== 0) {
-            debug('\nminutes is not 0');
+            debug('minutes = ' + minutes);
             if (minutes < 60){
                 debug('minutes is less then 60');
                 if (future.minutes() > minutes){
-                    debug('future.minutes is greater then minutes inputed, will add 1 hour to future');
+                    debug('future.minutes is greater then minutes inputted, will add 1 hour to future');
                     future.add('hours', 1);
                 }
                 future.minutes(minutes);
@@ -159,11 +185,11 @@ function _parseDateTime(dateTime, now){
             }
         }
         if (seconds !== 0) {
-            debug('\nseconds is not 0');
+            debug('seconds = ' + seconds);
             if (seconds < 60) {
                 debug('seconds is less then 60');
                 if (future.seconds() > seconds) {
-                    debug('future.seconds is greater then seconds inputed, will add 1 minute to future');
+                    debug('future.seconds is greater then seconds inputted, will add 1 minute to future');
                     future.add('minutes', 1);
                 }
                 future.seconds(seconds);
@@ -293,7 +319,6 @@ function deleteTimer(id) {
     });
 }
 
-var shouldDebug = false;
 function debug(message){
     if (shouldDebug)
         console.log(message);

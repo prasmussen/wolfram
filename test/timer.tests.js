@@ -3,28 +3,36 @@ var should = require('should'),
 	timer = require('../actions/timer');
 
 describe('Timer', function(){
-	// timer.privates.debug = true;
+	timer.privates.debug = true;
 	describe('getDuration', function(){
 		describe('_parseDuration', function(){
 			paramTest_parseDuration('10h', moment.duration(10, 'hours').asMilliseconds());
 		});
 		describe('_parseDateTime', function(){
-			paramTest_parseDateTime('M12d24h10', moment({ months:9, days: 10, hours: 10 }), (moment({ months:11, days: 24, hours: 10 }).unix() - moment({ months:9, days: 10, hours: 10 }).unix()) * 1000);
+			describe('Pattern: Y2013M12d24h12m10s5 \n', function(){
+				paramTest_parseDateTime('M12d24h10', moment({ months:9, days: 10, hours: 10 }), (moment({ months:11, days: 24, hours: 10 }).unix() - moment({ months:9, days: 10, hours: 10 }).unix()) * 1000);
 
-			paramTest_parseDateTime_shouldThrowException('h24', moment({ hours: 0 }), 'Hours can not be equal to or greater then 24.');
-			paramTest_parseDateTime('h20', moment({ hours: 10 }), moment.duration(10, 'hours').asMilliseconds());
-			paramTest_parseDateTime('h-20', moment({ hours: 10 }), 0);
+				paramTest_parseDateTime_shouldThrowException('h24', moment({ hours: 0 }), 'Hours can not be equal to or greater then 24.');
+				paramTest_parseDateTime('h20', moment({ hours: 10 }), moment.duration(10, 'hours').asMilliseconds());
+				paramTest_parseDateTime('h-20', moment({ hours: 10 }), 0);
 
-			paramTest_parseDateTime('h20m30', moment({ hours: 10 }), moment.duration(10, 'hours').add(moment.duration(30, 'minutes')).asMilliseconds());
+				paramTest_parseDateTime('h20m30', moment({ hours: 10 }), moment.duration(10, 'hours').add(moment.duration(30, 'minutes')).asMilliseconds());
 
-			paramTest_parseDateTime_shouldThrowException('m60', moment({ minutes: 0 }), 'Minutes can not be equal to or greater then 60.');
-			paramTest_parseDateTime('m59', moment({ minutes: 0 }), moment.duration(59, 'minutes').asMilliseconds());
+				paramTest_parseDateTime_shouldThrowException('m60', moment({ minutes: 0 }), 'Minutes can not be equal to or greater then 60.');
+				paramTest_parseDateTime('m59', moment({ minutes: 0 }), moment.duration(59, 'minutes').asMilliseconds());
 
-			paramTest_parseDateTime('m5', moment({ minutes: 10 }), moment.duration(55, 'minutes').asMilliseconds());
-			paramTest_parseDateTime('m5', moment({ minutes: 0 }), moment.duration(5, 'minutes').asMilliseconds());
-			paramTest_parseDateTime('m5', moment({ minutes: 55 }), moment.duration(10, 'minutes').asMilliseconds());
+				paramTest_parseDateTime('m5', moment({ minutes: 10 }), moment.duration(55, 'minutes').asMilliseconds());
+				paramTest_parseDateTime('m5', moment({ minutes: 0 }), moment.duration(5, 'minutes').asMilliseconds());
+				paramTest_parseDateTime('m5', moment({ minutes: 55 }), moment.duration(10, 'minutes').asMilliseconds());
 
-			paramTest_parseDateTime('m0', moment({ minutes: 0 }), 0);
+				paramTest_parseDateTime('m0', moment({ minutes: 0 }), 0);
+			});
+			describe('Patterns: 18/10/2014 18:00:11 | 18/10/2014 18:00 | 18/10/2014@18:00 | 18/10@18:00:11 | 18/10T18:00 | 18/10/2015 | 18/10/04/18:00 \n', function(){
+                paramTest_parseDateTime('24/12/2014', moment({ y: 2013, M: 11, d: 24 }), moment.duration(1, 'years').asMilliseconds());
+                paramTest_parseDateTime('24/12/2014 18:00', moment({ y: 2013, M: 11, d: 24 }), moment.duration(1, 'years').asMilliseconds() + moment.duration(18, 'hours').asMilliseconds());
+                paramTest_parseDateTime('24/12 18:00', moment({ y: 2013, M: 10, d: 24 }), moment.duration(1, 'months').asMilliseconds() + moment.duration(18, 'hours').asMilliseconds());
+                paramTest_parseDateTime('24/12/14 18:00', moment({ y: 2013, M: 11, d: 24 }), moment.duration(1, 'years').asMilliseconds() + moment.duration(18, 'hours').asMilliseconds());
+			});
 		});
 	});
 });

@@ -11,3 +11,6 @@ Session.vim
 # NPM
 node_modules/
 npm-debug.log
+
+# Web Storm
+.idea

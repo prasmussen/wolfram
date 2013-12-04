@@ -1,4 +1,5 @@
 var sprintf = require("sprintf").sprintf;
+var moment = require("moment");
 
 var timers = [];
 
@@ -21,7 +22,7 @@ function start(name, duration, ctx) {
         type: "timer",
         name: name,
         start: Date.now(),
-        duration: _parseDuration(duration),
+        duration: _getDuration(duration),
         owner: ctx.req.source.nick,
         replyTo: ctx.req.replyTo,
         req: ctx.req._id,
@@ -39,6 +40,18 @@ function start(name, duration, ctx) {
     });
 }
 
+function _getDuration(duration) {
+    var parsedDuration = _parseDuration(duration);
+    if (parsedDuration === 0) {
+        try{
+            parsedDuration = _parseDateTime(duration, moment());
+        } catch(e) {
+            sprintf(e.message);
+        }
+    }
+    return parsedDuration;
+}
+
 function _parseDuration(duration) {
     var t = {
         s: 1000,
@@ -49,23 +62,148 @@ function _parseDuration(duration) {
         y: 1000 * 60 * 60 * 24 * 365
     }
     
-    // Backwards compatibility
-    if (!isNaN(duration)) {
-        return parseInt(duration, 10) * t.m;
-    }
-    
     var re = /^(?:(\d+)y)?(?:(\d+)w)?(?:(\d+)d)?(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i;
     var time = re.exec(duration);
     
     var sum = 0;
-    sum += t.y * (time[1] || 0);
-    sum += t.w * (time[2] || 0);
-    sum += t.d * (time[3] || 0);
-    sum += t.h * (time[4] || 0);
-    sum += t.m * (time[5] || 0);
-    sum += t.s * (time[6] || 0);
+    
+    if (time) {
+        sum += t.y * (time[1] || 0);
+        sum += t.w * (time[2] || 0);
+        sum += t.d * (time[3] || 0);
+        sum += t.h * (time[4] || 0);
+        sum += t.m * (time[5] || 0);
+        sum += t.s * (time[6] || 0);
+    }
     
     return sum;
+}
+
+function _parseDateTime(dateTime, now){
+
+    var duration = 0;
+    var seconds;
+    var minutes;
+    var hours;
+    var days;
+    var months;
+    var years;
+
+    var re = /^(?:Y(\d+))?(?:M(\d+))?(?:d(\d+))?(?:h(\d+))?(?:m(\d+))?(?:s(\d+))?$/;
+    var time = re.exec(dateTime);
+    if (time) {
+        years = time[1] || 0;
+        months = time[2] || 0;
+        days = time[3] || 0;
+        hours = time[4] || 0;
+        minutes = time[5] || 0;
+        seconds = time[6] || 0;
+    }
+    else {
+        re = /^(?:(?:(\d{1,2})[\/.\\-](\d{1,2})(?:[\/.\\-]((?:\d{2}|\d{4})))?(?:\D(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?)|(?:(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?))$/;
+        time = re.exec(dateTime);
+        if (time) {
+            years = time[3] || 0;
+            months = time[2] || 0;
+            days = time[1] || 0;
+            hours = time[4] || time[7] || 0;
+            minutes = time[5] || time[8] || 0;
+            seconds = time[6] || time[9] || 0;
+        }
+    }
+
+    if (time) {
+
+        var future = moment(now);
+
+        if (years !== 0) {
+            if (years.toString().length == 2) {
+                debug('years has only 2 digits and is set to ' + years);
+                var currentYear = future.years().toString();
+                years = parseInt(currentYear.substring(0,2) + years);
+            }
+            debug('years = ' + years);
+            if (future.years() > years){
+                throw new Error('Year can not be set to the past.\n' +
+                    'future.year = ' + future.years() + ', years = ' + years);
+            } else {
+                future.years(years);
+            }
+        }
+        if (months !== 0) {
+            // Note: Months are zero indexed, so January is month 0.
+            months = months - 1; //since months input is not indexed, we subtract 1.
+            debug('months = ' + months);
+            if (months >= 0 && months <= 11) {
+            debug('months is equal to or in between 0 and 11');
+                if (future.months() > months){
+                    debug('future.months is greater then months inputted, will add 1 year to future');
+                    future.add('years', 1);
+                }
+                future.months(months);
+            } else {
+                throw new Error('Month can only be between 1 and 12.')
+            }
+        }
+        if (days !== 0) {
+            debug('days = ' + days);
+            if (moment({ M: future.months(), d: days }).parsingFlags().overflow !== -1){
+                throw new Error('Days exceeded amount of days for month.');
+            }
+            else if (future.date() > days){
+                debug('future.days is greater then days inputted, will add 1 month to future');
+                future.add('months', 1);
+            }
+            future.date(days);
+        }
+        if (hours !== 0) {
+            debug('hours = ' + hours);
+            if (hours < 24) {
+                debug('hours is less then 24');
+                if (future.hours() > hours){
+                    debug('future.hours is greater then hours inputted, will add 1 day to future');
+                    future.add('days', 1);
+                }
+                future.hours(hours);
+            } else {
+                throw new Error('Hours can not be equal to or greater then 24.');
+            }
+        }
+        if (minutes !== 0) {
+            debug('minutes = ' + minutes);
+            if (minutes < 60){
+                debug('minutes is less then 60');
+                if (future.minutes() > minutes){
+                    debug('future.minutes is greater then minutes inputted, will add 1 hour to future');
+                    future.add('hours', 1);
+                }
+                future.minutes(minutes);
+            } else {
+                throw new Error('Minutes can not be equal to or greater then 60.');
+            }
+        }
+        if (seconds !== 0) {
+            debug('seconds = ' + seconds);
+            if (seconds < 60) {
+                debug('seconds is less then 60');
+                if (future.seconds() > seconds) {
+                    debug('future.seconds is greater then seconds inputted, will add 1 minute to future');
+                    future.add('minutes', 1);
+                }
+                future.seconds(seconds);
+            } else {
+                throw new Error('Seconds can not exceed 60.');
+            }
+        }
+
+        debug(future.format());
+
+        // unix() returns seconds since year 0 so we multiply with 1000 to get milliseconds.
+        duration = (future.unix() - now.unix()) * 1000;
+        return duration;
+    }
+
+    return duration;
 }
 
 function _start(timer, ctx) {
@@ -179,9 +317,24 @@ function deleteTimer(id) {
     });
 }
 
+var shouldDebug = false;
+function debug(message){
+    if (shouldDebug)
+        console.log(message);
+}
+function enableDebug(){
+    shouldDebug = true;
+}
+
 module.exports = {
     init: init,
     start: start,
     list: list,
-    cancel: cancel
+    cancel: cancel,
+    privates: {
+        enableDebug: enableDebug,
+        _getDuration: _getDuration,
+        _parseDuration: _parseDuration,
+        _parseDateTime: _parseDateTime
+    }
 };

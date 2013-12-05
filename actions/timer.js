@@ -18,11 +18,18 @@ function init(ctx) {
 }
 
 function start(name, duration, ctx) {
+    try {
+        duration = mandate.getDuration(duration, moment());
+    } catch(e) {
+        ctx.callback(e.message);
+        return;
+    }
+
     var timer = {
         type: "timer",
         name: name,
         start: Date.now(),
-        duration: _getDuration(duration),
+        duration: duration,
         owner: ctx.req.source.nick,
         replyTo: ctx.req.replyTo,
         req: ctx.req._id,
@@ -38,14 +45,6 @@ function start(name, duration, ctx) {
         // Start timer
         _start(timer, ctx);
     });
-}
-
-function _getDuration(duration){
-    try{
-        return mandate.getDuration(duration, moment());
-    } catch(e) {
-        sprintf(e.message);
-    }
 }
 
 function _start(timer, ctx) {

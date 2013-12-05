@@ -20,14 +20,16 @@
     "cradle": "0.6.4",
     "entities": "0.1.1",
     "google": "0.1.0",
-    "imdb-api": "1.3.2",
+    "imdb-api": "*",
     "irc": "0.3.4",
     "moment": "2.4.0",
     "request": "2.11.4",
     "require-all": "0.0.4",
-    "sprintf": "0.1.1"
+    "sprintf": "0.1.1",
+    "random-to": "0.0.2",
+    "fromjs": "~2.1.7"
   },
-  "devDependencies" : {
+  "devDependencies": {
     "mocha": "*",
     "should": "*"
   },

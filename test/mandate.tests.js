@@ -2,7 +2,7 @@ var should = require('should'),
     moment = require('moment'),
     mandate = require('../lib/mandate');
 
-describe('Timer', function () {
+describe('mandate', function () {
     //mandate.enableDebug();
     describe('getDuration', function () {
 

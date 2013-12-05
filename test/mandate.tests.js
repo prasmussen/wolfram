@@ -3,7 +3,7 @@ var should = require('should'),
     mandate = require('../lib/mandate');
 
 describe('Timer', function () {
-    mandate.enableDebug();
+    //mandate.enableDebug();
     describe('getDuration', function () {
 
         paramTest_getDuration_shouldThrowException('24:00',

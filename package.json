@@ -25,9 +25,11 @@
     "moment": "2.4.0",
     "request": "2.11.4",
     "require-all": "0.0.4",
-    "sprintf": "0.1.1"
+    "sprintf": "0.1.1",
+    "random-to": "0.0.2",
+    "fromjs": "~2.1.7"
   },
-  "devDependencies" : {
+  "devDependencies": {
     "mocha": "*",
     "should": "*"
   },

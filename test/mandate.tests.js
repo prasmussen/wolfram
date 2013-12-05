@@ -1,10 +1,25 @@
 var should = require('should'),
 	moment = require('moment'),
-	timer = require('../actions/timer');
+	mandate = require('../lib/mandate');
 
 describe('Timer', function(){
-//	timer.privates.enableDebug();
+	mandate.enableDebug();
 	describe('getDuration', function(){
+
+        paramTest_getDuration('24/12/2014 18:00',
+                              moment({ y: 2013, M: 11, d: 24 }),
+                              moment.duration(1, 'years').asMilliseconds() + moment.duration(18, 'hours').asMilliseconds(),
+                              moment({ y: 2014, M: 11, d: 24, h: 18 }));
+
+        paramTest_getDuration('24/12/14 18:00',
+                              moment({ y: 2013, M: 11, d: 24 }),
+                              moment.duration(1, 'years').asMilliseconds() + moment.duration(18, 'hours').asMilliseconds(),
+                              moment({ y: 2014, M: 11, d: 24, h: 18 }));
+
+        paramTest_getDuration_shouldThrowException('24/12/12 18:00',
+                                                   moment({ y: 2013, M: 11, d: 24 }),
+                                                   'Year can only be set to the future.');
+
 		describe('_parseDuration', function(){
 			paramTest_parseDuration('10h', moment.duration(10, 'hours').asMilliseconds());
 			paramTest_parseDuration('-10h', 0);
@@ -16,17 +31,17 @@ describe('Timer', function(){
                 paramTest_parseDateTime('M12d24h10', moment({ months:9, days: 10, hours: 10 }), (moment({ months:11, days: 24, hours: 10 }).unix() - moment({ months:9, days: 10, hours: 10 }).unix()) * 1000);
 
                 // DAYS
-                paramTest_parseDateTime_shouldThrowException('d32', moment({ months: 1 }), 'Days exceeded amount of days for month.');
+                paramTest_parseDateTime_shouldThrowException('d32', moment(), 'Date can only be between 1 and 31.');
 
                 // HOURS
-                paramTest_parseDateTime_shouldThrowException('h24', moment({ hours: 0 }), 'Hours can not be equal to or greater then 24.');
+                paramTest_parseDateTime_shouldThrowException('h24', moment({ hours: 0 }), 'Hours can only be between 0 and 23.');
 				paramTest_parseDateTime('h20', moment({ hours: 10 }), moment.duration(10, 'hours').asMilliseconds());
 				paramTest_parseDateTime('h-20', moment({ hours: 10 }), 0);
 
 				paramTest_parseDateTime('h20m30', moment({ hours: 10 }), moment.duration(10, 'hours').add(moment.duration(30, 'minutes')).asMilliseconds());
 
                 // MINUTES
-				paramTest_parseDateTime_shouldThrowException('m60', moment({ minutes: 0 }), 'Minutes can not be equal to or greater then 60.');
+				paramTest_parseDateTime_shouldThrowException('m60', moment({ minutes: 0 }), 'Minutes can only be between 0 and 59.');
 				paramTest_parseDateTime('m59', moment({ minutes: 0 }), moment.duration(59, 'minutes').asMilliseconds());
 
 				paramTest_parseDateTime('m5', moment({ minutes: 10 }), moment.duration(55, 'minutes').asMilliseconds());
@@ -58,16 +73,33 @@ describe('Timer', function(){
 	});
 });
 
+function paramTest_getDuration_shouldThrowException(input, now, exceptionMessage){
+    it('should throw an exception with a message matching \'' + exceptionMessage + '\'\n\t when now is ' + now.format() + ' and input is ' + input, function(){
+        (function(){
+            mandate.getDuration(input, now);
+        }).should.throwError(exceptionMessage);
+    });
+}
+
+function paramTest_getDuration(input, now, expectedDuration, expectedDateTime){
+    it('should return ' + expectedDuration + 'ms when now is ' + now.format() + ' and input is ' + input + '\n' +
+       'and ' + now.format() + ' + ' + expectedDuration + 'ms should match ' + expectedDateTime.format(), function(){
+        var actualDuration = mandate.getDuration(input, now);
+        actualDuration.should.eql(expectedDuration);
+        now.add(actualDuration, 'milliseconds').isSame(expectedDateTime);
+    });
+}
+
 function paramTest_parseDuration(input, expected){
 	it('should return ' + expected + 'ms when input is ' + input, function(){
-		var actual = timer.privates._parseDuration(input);
+		var actual = mandate.parseDuration(input);
 		actual.should.eql(expected);
 	});
 }
 
 function paramTest_parseDateTime(input, now, expected){
 	it('should return ' + expected + 'ms when now is ' + now.format() + ' and input is ' + input, function(){
-		var actual = timer.privates._parseDateTime(input, now);
+		var actual = mandate.parseDateTime(input, now);
 		actual.should.eql(expected);
 	});
 }
@@ -75,7 +107,7 @@ function paramTest_parseDateTime(input, now, expected){
 function paramTest_parseDateTime_shouldThrowException(input, now, exceptionMessage){
 	it('should throw an exception with a message matching \'' + exceptionMessage + '\'\n\t when now is ' + now.format() + ' and input is ' + input, function(){
 		(function() {
-			timer.privates._parseDateTime(input, now);
+			mandate.parseDateTime(input, now);
 		}).should.throwError(exceptionMessage);
 	});
 }

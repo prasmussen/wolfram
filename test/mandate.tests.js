@@ -2,7 +2,7 @@ var should = require('should'),
     moment = require('moment'),
     mandate = require('../lib/mandate');
 
-describe('Timer', function () {
+describe('mandate', function () {
     //mandate.enableDebug();
     describe('getDuration', function () {
 
@@ -21,8 +21,8 @@ describe('Timer', function () {
             moment({ h: 0 }));
 
         paramTest_getDuration('18:00',
-            moment({ h: 0 }),
-            moment.duration(18, 'hours').asMilliseconds(),
+            moment({ h: 15 }),
+            moment.duration(3, 'hours').asMilliseconds(),
             moment({ h: 18 }));
 
         paramTest_getDuration('24/12 18:00',

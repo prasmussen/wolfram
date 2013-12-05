@@ -42,7 +42,7 @@ function start(name, duration, ctx) {
 
 function _getDuration(duration){
     try{
-        return mandate.getDuration(duration);
+        return mandate.getDuration(duration, moment());
     } catch(e) {
         sprintf(e.message);
     }

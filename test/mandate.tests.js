@@ -3,11 +3,13 @@ var should = require('should'),
     mandate = require('../lib/mandate');
 
 describe('mandate', function () {
-    //mandate.enableDebug();
+    mandate.enableDebug();
     describe('getDuration', function () {
 
         paramTest_getDuration_shouldThrowException('24:00',
             moment(),
+            null,
+            null,
             'Hours can only be between 0 and 23.');
 
         paramTest_getDuration('23:59',
@@ -24,6 +26,18 @@ describe('mandate', function () {
             moment({ h: 15 }),
             moment.duration(3, 'hours').asMilliseconds(),
             moment({ h: 18 }));
+
+        paramTest_getDuration_shouldThrowException('18:00',
+            moment({ h: 15 }),
+            moment.duration(3, 'hours').asMilliseconds(),
+            moment({ h: 20 }),
+            'expected false to be true');
+
+        paramTest_getDuration_shouldThrowException('18:00',
+            moment({ h: 15 }),
+            moment.duration(5, 'hours').asMilliseconds(),
+            moment({ h: 20 }),
+            'expected 10800000 to equal 18000000');
 
         paramTest_getDuration('24/12 18:00',
             moment({ M: 10, d: 24 }),
@@ -42,6 +56,8 @@ describe('mandate', function () {
 
         paramTest_getDuration_shouldThrowException('24/12/12 18:00',
             moment({ y: 2013, M: 11, d: 24 }),
+            null,
+            null,
             'Year can only be set to the future.');
 
         describe('_parseDuration', function () {
@@ -97,10 +113,12 @@ describe('mandate', function () {
     });
 });
 
-function paramTest_getDuration_shouldThrowException(input, now, exceptionMessage) {
+function paramTest_getDuration_shouldThrowException(input, now, expectedDuration, expectedDateTime, exceptionMessage) {
     it('should throw an exception with a message matching \'' + exceptionMessage + '\'\n\t when now is ' + now.format() + ' and input is ' + input, function () {
         (function () {
-            mandate.getDuration(input, now);
+            var actualDuration = mandate.getDuration(input, now);
+            actualDuration.should.eql(expectedDuration);
+            now.add(actualDuration, 'milliseconds').isSame(expectedDateTime).should.be.true;
         }).should.throwError(exceptionMessage);
     });
 }
@@ -110,7 +128,7 @@ function paramTest_getDuration(input, now, expectedDuration, expectedDateTime) {
         'and ' + now.format() + ' + ' + expectedDuration + 'ms should match ' + expectedDateTime.format(), function () {
         var actualDuration = mandate.getDuration(input, now);
         actualDuration.should.eql(expectedDuration);
-        now.add(actualDuration, 'milliseconds').isSame(expectedDateTime);
+        now.add(actualDuration, 'milliseconds').isSame(expectedDateTime).should.be.true;
     });
 }
 

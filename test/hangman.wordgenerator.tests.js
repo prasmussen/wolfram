@@ -7,25 +7,18 @@ var should = require('should'),
     from = require('fromjs');
 
 describe('wordGenerator', function () {
-
     describe('init()', function () {
         it('should load all the words from file into dictionary', function (done) {
             //Arrange and Act
-            wordGenerator.init('lib/hangman/ordliste.txt', function (ordliste) {
+            wordGenerator.init('lib/hangman/ordliste_short.txt', function (wordlist) {
                 //Assert
-                ordliste.should.not.be.empty;
+                wordlist.should.not.be.empty;
                 done();
             });
         });
     });
 
     describe('functions', function () {
-
-        before(function (done) {
-            wordGenerator.init('lib/hangman/ordliste_short.txt');
-            done();
-        });
-
         describe('pickRandomWord(\'subst\')', function () {
             it('should return a random word from the dictionary', function () {
                 //Arrange and Act
@@ -40,14 +33,21 @@ describe('wordGenerator', function () {
             });
         });
 
-        describe('pickRandomWord(\'subst\') two times', function () {
+        describe('pickRandomWord(\'subst\')', function () {
             it('should not return the same word twice, in fact never!', function () {
                 //Arrange and Act
                 var firstWord = wordGenerator.pickARandomWord('subst');
+                //wordGenerator.privates.printDebug();
                 var secondWord = wordGenerator.pickARandomWord('subst');
+                //wordGenerator.privates.printDebug();
 
                 //Assert
                 firstWord.should.not.be.eql(secondWord);
+            });
+            it('should',function(){
+                for (var i = 0; i < 4; i++) {
+                    wordGenerator.pickARandomWord('subst');
+                }
             });
         });
 

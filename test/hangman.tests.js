@@ -2,21 +2,10 @@
  * Created by sander.struijk on 05.12.13.
  */
 "use strict";
-var hangman = require('../lib/hangman/hangman'),
+var hangman = require('../actions/hangman'),
     should = require('should');
 
 describe('hangman', function () {
-    describe('init()', function () {
-        it('wordGenerator should be initialized', function (done) {
-            //Arrange and Act
-            hangman.init('lib/hangman/ordliste_short.txt', function (wordlist) {
-                //Assert
-                wordlist.should.not.be.empty;
-                done();
-            });
-        });
-    });
-
     describe('start()', function () {
         it('should start a new game', function () {
             var response = hangman.start('subst');

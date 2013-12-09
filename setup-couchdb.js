@@ -3,7 +3,7 @@ var couchapp = require('couchapp');
 var design = {
     _id: '_design/app',
     views: {},
-    updates: {},
+    updates: {}
 };
 
 design.views.triggers = {

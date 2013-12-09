@@ -27,7 +27,8 @@
     "require-all": "0.0.4",
     "sprintf": "0.1.1",
     "random-to": "0.0.2",
-    "fromjs": "~2.1.7"
+    "fromjs": "~2.1.7",
+    "string": "~1.7.0"
   },
   "devDependencies": {
     "mocha": "*",

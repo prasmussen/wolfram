@@ -4,8 +4,7 @@
 "use strict";
 var should = require('should'),
     wordEngine = require('../lib/hangman/hangman.wordengine'),
-    from = require('fromjs'),
-    assert = require('assert');
+    from = require('fromjs');
 
 describe('wordEngine', function () {
     describe('public', function () {
@@ -153,13 +152,16 @@ describe('wordEngine', function () {
             before(function () {
                 wordEngine.privates.io.init();
             });
-            describe('getTypesFromPath()', function(){
-               it('should return an array with all the types availaple.', function(){
-                   var types = wordEngine.privates.io.getTypesFromPaths();
-                   types.should.be.ok;
-                   types.should.be.an.Array;
-                   types.length.should.be.above(0);
-               });
+            describe('getTypesFromPath()', function () {
+                it('should return an array with all the types availaple.', function () {
+                    var types = wordEngine.privates.io.getTypesFromPaths();
+                    types.should.be.ok;
+                    types.should.be.an.Array;
+                    types.length.should.be.above(0);
+                    var type = from(types).single(function(x) { return x.indexOf('test') !== -1; });
+                    type.should.be.ok;
+                    type.should.eql('test');
+                });
             });
             describe('getFilePathMatchingType(type)', function () {
                 it('should return the path containing the type in its filename.', function () {

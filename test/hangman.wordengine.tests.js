@@ -45,6 +45,19 @@ describe('wordEngine', function () {
     });
     describe('private', function () {
         describe('wordFactory', function () {
+            describe('blackListWord(word)', function(){
+                it('should write word to blacklist file if the word is not already blacklisted.', function(){
+                    wordEngine.blackListWord('BLACKLIST');
+                });
+                it('should verify that a word has been blacklisted or not.', function(){
+                    wordEngine.privates.wordFactory.verifyIfBlackListContainWord('BLACKLIST').should.eql.true;
+                });
+                it('should write word to blacklist file if the word is not already blacklisted.', function(){
+                    (function(){
+                        wordEngine.blackListWord('BLACKLIST');
+                    }).should.throwError('Word has already been blacklisted.');
+                });
+            });
             describe('createWord(string)', function () {
                 it('should return a word object which has attributes and functions to manipulate and test the word', function () {
                     //Arrange and Act
@@ -102,6 +115,11 @@ describe('wordEngine', function () {
                     //Assert
                     match.should.be.true;
                     word.displayWord().should.eql('S _ _ _ _ _ S');
+                });
+                it('should return the word reveal when revealWord() is called', function(){
+                    var word = wordEngine.privates.wordFactory.createWord('SKAR test');
+                    word.displayWord().should.eql('_ _ _ _');
+                    word.revealWord().should.eql('S K A R');
                 });
             });
             describe('when the whole word has been matched', function () {

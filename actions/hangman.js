@@ -57,7 +57,7 @@ function answer(c, ctx) {
         faildGuessCount++;
         if (faildGuessCount >= currentGame.attempts) {
             currentGame.active = false;
-            ctx.callback('Game Over! ' + nick + ' lost the game!');
+            ctx.callback('Game Over! ' + nick + ' lost the game! The full word was: ' + currentGame.word.revealWord());
         }
         currentGame.players[nick] = faildGuessCount;
         ctx.callback(nick + ' failed answers: ' + faildGuessCount);
@@ -69,9 +69,14 @@ function listTypes(ctx){
     ctx.callback('Available hangbaby categories: ' + from(types).aggregate('', '(types, type) => types += type + " "'));
 }
 
+function blackListWord(word){
+    wordEngine.blackListWord(word);
+}
+
 module.exports = {
     start: start,
     answer: answer,
     stop: stop,
-    listTypes: listTypes
+    listTypes: listTypes,
+    blackListWord: blackListWord
 };

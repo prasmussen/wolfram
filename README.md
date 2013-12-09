@@ -3,8 +3,6 @@ wolfram
 
 IRC bot
 
-----------
-
 Installation
 -----
 

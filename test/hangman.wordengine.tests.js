@@ -153,6 +153,14 @@ describe('wordEngine', function () {
             before(function () {
                 wordEngine.privates.io.init();
             });
+            describe('getTypesFromPath()', function(){
+               it('should return an array with all the types availaple.', function(){
+                   var types = wordEngine.privates.io.getTypesFromPaths();
+                   types.should.be.ok;
+                   types.should.be.an.Array;
+                   types.length.should.be.above(0);
+               });
+            });
             describe('getFilePathMatchingType(type)', function () {
                 it('should return the path containing the type in its filename.', function () {
                     var path = wordEngine.privates.io.getFilePathMatchingType('subst');
@@ -164,23 +172,24 @@ describe('wordEngine', function () {
                     var path = wordEngine.privates.io.getFilePathMatchingType('test');
                     var index = wordEngine.privates.io.getRandomLineNumber({type: 'test'});
                     var word = wordEngine.privates.io.getLine(path, index);
-                    assert.notEqual(word, 'undefined');
+                    word.should.be.ok;
                 });
                 describe('getRandomLineNumber(option)', function () {
                     it('should return a random number between 0 and 4 provided type', function () {
                         var index = wordEngine.privates.io.getRandomLineNumber({type: 'test'});
-                        assert.notEqual(index, 'undefined');
-                        assert.notEqual(index, 'NaN');
+                        index.should.be.an.Number;
                     });
                     it('should return a random number between 0 and 4 provided path', function () {
                         var path = wordEngine.privates.io.getFilePathMatchingType('test');
                         var index = wordEngine.privates.io.getRandomLineNumber({path: path});
+                        index.should.be.an.Number;
                         index.should.be.within(0, 4);
                     });
                 });
                 describe('getLineCount(path)', function () {
                     var path = wordEngine.privates.io.getFilePathMatchingType('test');
                     var count = wordEngine.privates.io.getLineCount(path);
+                    count.should.be.an.Number;
                     count.should.be.eql(4);
                 });
             });

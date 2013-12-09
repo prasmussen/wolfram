@@ -6,7 +6,8 @@
  * Created by sander.struijk on 05.12.13.
  */
 "use strict";
-var wordEngine = require('../lib/hangman/hangman.wordengine');
+var wordEngine = require('../lib/hangman/hangman.wordengine'),
+    from = require('fromjs');
 
 var currentGame = {};
 
@@ -36,7 +37,7 @@ function stop(ctx) {
     if (currentGame) {
         currentGame.active = false;
         var nick = ctx.req.source.nick;
-        ctx.callback(nick + ' stopped the game, WHY DID YOU STOP THE GAME??!!?!1|||11 anyways want start a new one?');
+        ctx.callback(nick + ' stopped the game, WHY DID YOU STOP THE GAME??!!?!1|||11');
     }
 }
 
@@ -63,8 +64,14 @@ function answer(c, ctx) {
     }
 }
 
+function listTypes(ctx){
+    var types = wordEngine.getTypesFromPaths();
+    ctx.callback('Available hangbaby categories: ' + from(types).aggregate('', '(types, type) => types += type + " "'));
+}
+
 module.exports = {
     start: start,
     answer: answer,
-    stop: stop
+    stop: stop,
+    listTypes: listTypes
 };

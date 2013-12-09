@@ -29,7 +29,7 @@ describe('hangman', function () {
     describe('stop(ctx)', function () {
         it('should end the current ongoing game.', function () {
             hangman.stop({req: {source: {nick: 'myNick' }}, callback: function(str){
-                str.should.eql('myNick stopped the game, WHY DID YOU STOP THE GAME??!!?!1|||11 anyways want start a new one?');
+                str.should.eql('myNick stopped the game, WHY DID YOU STOP THE GAME??!!?!1|||11');
             }});
         });
     });

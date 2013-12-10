@@ -45,17 +45,32 @@ describe('wordEngine', function () {
     });
     describe('private', function () {
         describe('wordFactory', function () {
-            describe('blackListWord(word)', function(){
-                it('should write word to blacklist file if the word is not already blacklisted.', function(){
-                    wordEngine.blackListWord('BLACKLIST');
+            describe('blackListWord(word)', function () {
+                it('should write word to blacklist file if the word is not already blacklisted.', function () {
+                    wordEngine.blackListWord('BLACKLIST', 'lib/hangman/wordlists/blacklist_test.txt');
                 });
-                it('should verify that a word has been blacklisted or not.', function(){
+                it('should verify that a word has been blacklisted or not.', function () {
                     wordEngine.privates.wordFactory.verifyIfBlackListContainWord('BLACKLIST').should.eql.true;
                 });
-                it('should write word to blacklist file if the word is not already blacklisted.', function(){
-                    (function(){
-                        wordEngine.blackListWord('BLACKLIST');
+                it('should write word to blacklist file if the word is not already blacklisted.', function () {
+                    (function () {
+                        wordEngine.blackListWord('BLACKLIST_THROW_ERROR', 'lib/hangman/wordlists/blacklist_test.txt');
+                        wordEngine.blackListWord('BLACKLIST_THROW_ERROR', 'lib/hangman/wordlists/blacklist_test.txt');
                     }).should.throwError('Word has already been blacklisted.');
+                });
+            });
+            describe('whiteListWord(word)', function () {
+                it('should remove the word from blacklist if the word is whitelisted', function () {
+                    wordEngine.whiteListWord('BLACKLIST', 'lib/hangman/wordlists/blacklist_test.txt');
+                });
+                it('should verify that a word has been blacklisted or not.', function () {
+                    wordEngine.privates.wordFactory.verifyIfBlackListContainWord('BLACKLIST').should.eql.false;
+                });
+                it('should write word to blacklist file if the word is not already blacklisted.', function () {
+                    (function () {
+                        wordEngine.whiteListWord('BLACKLIST_THROW_ERROR', 'lib/hangman/wordlists/blacklist_test.txt');
+                        wordEngine.whiteListWord('BLACKLIST_THROW_ERROR', 'lib/hangman/wordlists/blacklist_test.txt');
+                    }).should.throwError('Could not find word in blacklist.');
                 });
             });
             describe('createWord(string)', function () {
@@ -116,7 +131,7 @@ describe('wordEngine', function () {
                     match.should.be.true;
                     word.displayWord().should.eql('S _ _ _ _ _ S');
                 });
-                it('should return the word reveal when revealWord() is called', function(){
+                it('should return the word reveal when revealWord() is called', function () {
                     var word = wordEngine.privates.wordFactory.createWord('SKAR test');
                     word.displayWord().should.eql('_ _ _ _');
                     word.revealWord().should.eql('S K A R');
@@ -176,9 +191,11 @@ describe('wordEngine', function () {
                     types.should.be.ok;
                     types.should.be.an.Array;
                     types.length.should.be.above(0);
-                    var type = from(types).single(function(x) { return x.indexOf('test') !== -1; });
+                    var type = from(types).single(function (x) {
+                        return x.indexOf('subst') !== -1;
+                    });
                     type.should.be.ok;
-                    type.should.eql('test');
+                    type.should.eql('subst');
                 });
             });
             describe('getFilePathMatchingType(type)', function () {

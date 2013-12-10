@@ -7,7 +7,8 @@
  */
 "use strict";
 var wordEngine = require('../lib/hangman/hangman.wordengine'),
-    from = require('fromjs');
+    from = require('fromjs'),
+    S = require('string');
 
 var currentGame = {};
 
@@ -65,12 +66,29 @@ function answer(c, ctx) {
 }
 
 function listTypes(ctx){
-    var types = wordEngine.getTypesFromPaths();
-    ctx.callback('Available hangbaby categories: ' + from(types).aggregate('', '(types, type) => types += type + " "'));
+    try {
+        var types = wordEngine.getTypesFromPaths();
+        var typesString = S(from(types).aggregate('', '(types, type) => types += type + ", "')).chompRight(', ').s;
+        ctx.callback('Available hangman categories(' + types.length + '): ' + typesString);
+    } catch(e) {
+        ctx.callback(e.message);
+    }
 }
 
-function blackListWord(word){
-    wordEngine.blackListWord(word);
+function blackListWord(word, ctx){
+    try{
+        ctx.callback(wordEngine.blackListWord(word));
+    } catch(e) {
+        ctx.callback(e.message);
+    }
+}
+
+function whiteListWord(word, ctx){
+    try {
+        ctx.callback(wordEngine.whiteListWord(word));
+    } catch(e) {
+        ctx.callback(e.message);
+    }
 }
 
 module.exports = {
@@ -78,5 +96,6 @@ module.exports = {
     answer: answer,
     stop: stop,
     listTypes: listTypes,
-    blackListWord: blackListWord
+    blackListWord: blackListWord,
+    whiteListWord: whiteListWord
 };

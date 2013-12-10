@@ -39,11 +39,11 @@ It can be a little frustrating to create users in couchdb, there is no create us
       "password": "$PASSWORD"
     }
 
-if you don't have the npm packages couchdb and couchapp installed globally install those as well, can be installed directly into the project. no need for having them installed globally for the application to run.
+If you skiped the development section, here is a recap
 
-    $npm install couchdb
-    $npm install couchapp
-    $node_modules\.bin\couchapp push setup-couchdb.js http://username:password@localhost:5984/wolfram
+    $git clone .....wolfram.git
+    $npm install
+    $node_modules\.bin\couchapp push setup-couchdb.js http://username:password@localhost:5984/dbname
 
 Now the database should be up an running! Now you can start the backend.js and client.js
 

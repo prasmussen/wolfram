@@ -19,9 +19,9 @@ describe('hangman', function () {
         });
 
     });
-    describe('answer(c, ctx)', function () {
+    describe('guess(c, ctx)', function () {
         it('should return', function () {
-            hangman.answer('S', {req: {source: {nick: 'myNick' }}, callback: function (str) {
+            hangman.guess('S', {req: {source: {nick: 'myNick' }}, callback: function (str) {
 
             }});
         });

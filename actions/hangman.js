@@ -44,27 +44,59 @@ function stop(ctx) {
     }
 }
 
+function handleFailedAnswer(faildGuessCount, ctx) {
+    var nick = ctx.req.source.nick;
+    faildGuessCount++;
+    if (faildGuessCount >= currentGame.attempts) {
+        currentGame.active = false;
+        ctx.callback('Game Over! ' + nick + ' lost the game! The full word was: ' + currentGame.word.revealWord());
+    }
+    currentGame.players[nick] = faildGuessCount;
+    ctx.callback(nick + ' failed answers: ' + faildGuessCount);
+}
+
+function handleFullCorrectAnswer(ctx, faildGuessCount) {
+    var nick = ctx.req.source.nick;
+    currentGame.active = false;
+    ctx.callback(nick + ' Won the Game! with ' + faildGuessCount + ' failed attempts, guessing the word: ' + currentGame.word.displayWord());
+}
+
+function handleCorrectGuess(ctx) {
+    ctx.callback(currentGame.word.displayWord());
+}
+
+function matchChar(c, ctx, faildGuessCount) {
+    if (currentGame.word.matchChar(c)) {
+        if (currentGame.word.solved()) {
+            handleFullCorrectAnswer(ctx, faildGuessCount);
+        } else {
+            handleCorrectGuess(ctx);
+        }
+    } else {
+        handleFailedAnswer(faildGuessCount, ctx);
+    }
+}
+
+function matchWord(word, ctx, faildGuessCount) {
+    if (currentGame.word.matchWord(word)) {
+        if (currentGame.word.solved()) {
+            handleFullCorrectAnswer(ctx, faildGuessCount);
+        }
+    } else {
+        handleFailedAnswer(faildGuessCount, ctx);
+    }
+}
+
 function answer(c, ctx) {
+    if (!c) return;
     if (!currentGame.active) throw new Error('No game running, what was it that you wanted to answer?');
     var nick = ctx.req.source.nick;
     var faildGuessCount = currentGame.players[nick] || 0;
 
-    if (currentGame.word.matchChar(c)) {
-        if (currentGame.word.solved()) {
-            currentGame.active = false;
-            ctx.callback(nick + ' Won the Game! with ' + faildGuessCount + ' failed attempts, guessing the word: ' + currentGame.word.displayWord());
-        } else {
-            ctx.callback(currentGame.word.displayWord());
-        }
-    } else {
-        faildGuessCount++;
-        if (faildGuessCount >= currentGame.attempts) {
-            currentGame.active = false;
-            ctx.callback('Game Over! ' + nick + ' lost the game! The full word was: ' + currentGame.word.revealWord());
-        }
-        currentGame.players[nick] = faildGuessCount;
-        ctx.callback(nick + ' failed answers: ' + faildGuessCount);
-    }
+    if (c.length === 1)
+        matchChar(c, ctx, faildGuessCount);
+    else if (c.length > 1)
+        matchWord(c, ctx, faildGuessCount);
 }
 
 function listTypes(ctx){

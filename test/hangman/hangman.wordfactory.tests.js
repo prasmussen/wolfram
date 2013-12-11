@@ -6,7 +6,7 @@ var should = require('should'),
     wordFactory = require('../../lib/hangman/hangman.wordfactory'),
     from = require('fromjs');
 
-describe('hangman', function(){
+describe('hangman', function () {
     describe('wordFactory', function () {
         describe('createWord(string)', function () {
             it('should return a word object which has attributes and functions to manipulate and test the word', function () {
@@ -70,6 +70,24 @@ describe('hangman', function(){
                 var word = wordFactory.createWord('SKAR test');
                 word.displayWord().should.eql('_ _ _ _');
                 word.revealWord().should.eql('S K A R');
+            });
+        });
+        describe('word.matchWord(w)', function () {
+            it('should return true if whole word is matched, and display the correct guessed word along with the winning statement', function () {
+                var word = wordFactory.createWord('SKAPTØS subst');
+
+                var match = word.matchWord('SKAPTØS');
+
+                match.should.be.true;
+                word.displayWord().should.eql('S K A P T Ø S');
+            });
+            it('should return false if whole word did not match', function () {
+                var word = wordFactory.createWord('SKAPTØS subst');
+
+                var match = word.matchWord('ASDASD');
+
+                match.should.be.false;
+                word.displayWord().should.eql('_ _ _ _ _ _ _');
             });
         });
         describe('when the whole word has been matched', function () {

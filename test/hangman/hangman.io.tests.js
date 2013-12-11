@@ -27,7 +27,7 @@ describe('hangman', function(){
         describe('getFilePathMatchingType(type)', function () {
             it('should return the path containing the type in its filename.', function () {
                 var path = io.getFilePathMatchingType('subst');
-                path.should.eql('lib/hangman/wordlists/subst.nor.wordlist.txt');
+                path.should.eql('lib\\hangman\\wordlists\\subst.nor.wordlist.txt');
             });
         });
         describe('getLine(type, line_no, callback)', function () {

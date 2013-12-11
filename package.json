@@ -16,6 +16,7 @@
       "email": "sander.struijk@gmail.com"
     }
   ],
+  "engine": "node >= 0.10.x",
   "dependencies": {
     "cradle": "0.6.4",
     "entities": "0.1.1",
@@ -28,7 +29,10 @@
     "sprintf": "0.1.1",
     "random-to": "0.0.2",
     "fromjs": "~2.1.7",
-    "string": "~1.7.0"
+    "string": "~1.7.0",
+    "couchdb": "~0.3.8",
+    "couchapp": "~0.10.0",
+    "thesaurus": "0.0.0"
   },
   "devDependencies": {
     "mocha": "*",

@@ -31,7 +31,8 @@
     "fromjs": "~2.1.7",
     "string": "~1.7.0",
     "couchdb": "~0.3.8",
-    "couchapp": "~0.10.0"
+    "couchapp": "~0.10.0",
+    "thesaurus": "0.0.0"
   },
   "devDependencies": {
     "mocha": "*",

@@ -6,7 +6,9 @@
  * Created by sander.struijk on 05.12.13.
  */
 "use strict";
-var wordEngine = require('../lib/hangman/hangman.wordengine'),
+var wordSelector = require('../lib/hangman/hangman.wordselector'),
+    wordFactory = require('../lib/hangman/hangman.wordfactory'),
+    io = require('../lib/hangman/hangman.io'),
     from = require('fromjs'),
     S = require('string');
 
@@ -29,7 +31,7 @@ function newGame(type, attempts) {
         active: true,
         attempts: attempts,
         players: {},
-        word: wordEngine.pickARandomWord(type)
+        word: wordSelector.pickARandomWord(type)
     };
 }
 
@@ -67,7 +69,7 @@ function answer(c, ctx) {
 
 function listTypes(ctx){
     try {
-        var types = wordEngine.getTypesFromPaths();
+        var types = io.getTypesFromPaths();
         var typesString = S(from(types).aggregate('', '(types, type) => types += type + ", "')).chompRight(', ').s;
         ctx.callback('Available hangman categories(' + types.length + '): ' + typesString);
     } catch(e) {
@@ -77,7 +79,7 @@ function listTypes(ctx){
 
 function blackListWord(word, ctx){
     try{
-        ctx.callback(wordEngine.blackListWord(word));
+        ctx.callback(wordFactory.blackListWord(word));
     } catch(e) {
         ctx.callback(e.message);
     }
@@ -85,7 +87,7 @@ function blackListWord(word, ctx){
 
 function whiteListWord(word, ctx){
     try {
-        ctx.callback(wordEngine.whiteListWord(word));
+        ctx.callback(wordFactory.whiteListWord(word));
     } catch(e) {
         ctx.callback(e.message);
     }

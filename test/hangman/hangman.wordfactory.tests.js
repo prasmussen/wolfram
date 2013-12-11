@@ -7,34 +7,6 @@ var should = require('should'),
     from = require('fromjs');
 
 describe('wordFactory', function () {
-    describe('blackListWord(word)', function () {
-        it('should write word to blacklist file if the word is not already blacklisted.', function () {
-            wordFactory.blackListWord('BLACKLIST', 'lib/hangman/wordlists/blacklist_test.txt');
-        });
-        it('should verify that a word has been blacklisted or not.', function () {
-            wordFactory.doesBlackListContainWord('BLACKLIST').should.eql.true;
-        });
-        it('should write word to blacklist file if the word is not already blacklisted.', function () {
-            (function () {
-                wordFactory.blackListWord('BLACKLIST_THROW_ERROR', 'lib/hangman/wordlists/blacklist_test.txt');
-                wordFactory.blackListWord('BLACKLIST_THROW_ERROR', 'lib/hangman/wordlists/blacklist_test.txt');
-            }).should.throwError('Word has already been blacklisted.');
-        });
-    });
-    describe('whiteListWord(word)', function () {
-        it('should remove the word from blacklist if the word is whitelisted', function () {
-            wordFactory.whiteListWord('BLACKLIST', 'lib/hangman/wordlists/blacklist_test.txt');
-        });
-        it('should verify that a word has been blacklisted or not.', function () {
-            wordFactory.doesBlackListContainWord('BLACKLIST').should.eql.false;
-        });
-        it('should write word to blacklist file if the word is not already blacklisted.', function () {
-            (function () {
-                wordFactory.whiteListWord('BLACKLIST_THROW_ERROR', 'lib/hangman/wordlists/blacklist_test.txt');
-                wordFactory.whiteListWord('BLACKLIST_THROW_ERROR', 'lib/hangman/wordlists/blacklist_test.txt');
-            }).should.throwError('Could not find word in blacklist.');
-        });
-    });
     describe('createWord(string)', function () {
         it('should return a word object which has attributes and functions to manipulate and test the word', function () {
             //Arrange and Act

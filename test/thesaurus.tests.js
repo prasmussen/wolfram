@@ -7,10 +7,10 @@ var thesaurus = require('../actions/thesaurus'),
 describe('TheSaurus', function () {
     describe('Find(word)', function () {
         describe('where word is "generator"', function () {
-            it('should return a string with synonymes separated with comma and space', function () {
+            it('should return a string with synonyms separated with comma and space', function () {
                 thesaurus.ask('generator', {req: {source: {nick: 'myNick' }}, callback: function (str) {
                     str.should.not.be.empty;
-                    str.should.eql('Synonymes @ generator => apparatus, setup, engine, source, author, maker, shaper, electronic device');
+                    str.should.eql('Synonyms @ generator => apparatus, setup, engine, source, author, maker, shaper, electronic device');
                 }});
             });
         });

@@ -7,7 +7,7 @@
  */
 "use strict";
 var wordSelector = require('../lib/hangman/hangman.wordselector'),
-    wordFactory = require('../lib/hangman/hangman.wordfactory'),
+    blacklist = require('../lib/hangman/hangman.blacklist'),
     io = require('../lib/hangman/hangman.io'),
     from = require('fromjs'),
     S = require('string');
@@ -74,11 +74,11 @@ function newGame(type, attempts) {
     };
 }
 
-function compareGuessWithAnswer(guess, ctx, faildGuessCount) {
+function compareGuessWithAnswer(guess, ctx, failedGuessCount) {
     if (guess.length === 1)
-        matchChar(guess, ctx, faildGuessCount);
+        matchChar(guess, ctx, failedGuessCount);
     else if (guess.length > 1)
-        matchWord(guess, ctx, faildGuessCount);
+        matchWord(guess, ctx, failedGuessCount);
 }
 
 function start(type, ctx) {
@@ -119,7 +119,7 @@ function listTypes(ctx){
 
 function blackListWord(word, ctx){
     try{
-        ctx.callback(wordFactory.blackListWord(word));
+        ctx.callback(blacklist.blackListWord(word));
     } catch(e) {
         ctx.callback(e.message);
     }
@@ -127,7 +127,7 @@ function blackListWord(word, ctx){
 
 function whiteListWord(word, ctx){
     try {
-        ctx.callback(wordFactory.whiteListWord(word));
+        ctx.callback(blacklist.whiteListWord(word));
     } catch(e) {
         ctx.callback(e.message);
     }

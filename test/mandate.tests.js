@@ -147,6 +147,7 @@ var TestHelper = function () {
             return {
                 input: input,
                 now: now,
+                nowFormatted: now.format(),
                 expectedDuration: expectedDuration
             };
         }

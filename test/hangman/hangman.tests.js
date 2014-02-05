@@ -17,7 +17,6 @@ describe('hangman', function () {
                 str.should.eql('Can not start a new game while already playing, stupid person myNick! Stop or end game to start a new one.');
             }});
         });
-
     });
     describe('guess(c, ctx)', function () {
         it('should return', function () {

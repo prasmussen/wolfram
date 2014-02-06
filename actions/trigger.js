@@ -6,7 +6,7 @@ function list(ctx) {
             console.log(err);
             return ctx.callback("Failed to get triggers");
         }
-        var triggers = []
+        var triggers = [];
         var trigger = docs.map(function(doc) {
             triggers.push(sprintf("[%d] %s: '%s' => '%s'", triggers.length, doc.name, doc.action, doc.pattern));
         });

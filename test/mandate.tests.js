@@ -32,22 +32,6 @@ describe('mandate', function () {
         paramTest_parseDuration('10h', moment.duration(10, 'hours').asMilliseconds());
         paramTest_parseDuration('-10h', 0);
     });
-    describe('_parseDateTimeOddbjorn', function () {
-        helper = testHelper.parseDateTimeOddbjornTestHelper;
-        var testCases = [
-            new helper.TestCase('23:59', moment({ h: 0 }).toDate(), moment.duration({ h: 23, m: 59 }).asMilliseconds()),
-            new helper.TestCase('00:00', moment({ h: 0 }).toDate(), 0),
-            new helper.TestCase('18:00', moment({ h: 15 }).toDate(), moment.duration({ h: 3 }).asMilliseconds()),
-            new helper.TestCase('24/12 18:00', moment({ M: 10, d: 24 }).toDate(), moment.duration({ d: 30, h: 18 }).asMilliseconds()),
-            new helper.TestCase('24/12/2014 18:00', moment({ y: 2013, M: 11, d: 24 }).toDate(), moment.duration({ y: 1, h: 18 }).asMilliseconds()),
-            new helper.TestCase('01/01 10:00', moment({ M: 00, d: 01, h: 20 }).toDate(), moment.duration({ y: 1 }).subtract(10, 'h').asMilliseconds()),
-            new helper.TestCase('24/12/2014 18:00', moment({ y: 2015, M: 11, d: 24 }).toDate(), 0),
-            new helper.TestCase('20:00', moment({ h: 20, m: 20 }).toDate(), moment.duration({ h: 23, m: 40 }).asMilliseconds()),
-            new helper.TestCase('20:00', moment({ y: 3050, h: 20, m: 20 }).toDate(), moment.duration({ h: 23, m: 40 }).asMilliseconds()),
-            new helper.TestCase('01/01/3050 20:00', moment({ y: 2050, M: 00, d: 0, h: 20, m: 20 }).toDate(), moment.duration({ y: 100, h: 23, m: 40 }).asMilliseconds())
-        ];
-        helper.executeTestCases(testCases);
-    });
     describe('_parseDateTime', function () {
         helper = testHelper.parseDateTimeTestHelper;
         var testCases = [

@@ -65,5 +65,5 @@ The `npm test` command is in fact only invoking a command (`mocha -R list`) defi
   [1]: http://couchdb.apache.org/
   [2]: http://docs.couchdb.org/en/latest/intro/tour.html#welcome-to-futon
   [3]: http://wiki.apache.org/couchdb/How_to_create_users_via_script
-  [4]: http://visionmedia.github.io/mocha/
+  [4]: http://mochajs.org/
   [5]: https://github.com/visionmedia/should.js

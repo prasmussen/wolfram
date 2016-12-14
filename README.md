@@ -29,16 +29,6 @@ Now make a copy of the `wolfram.config.default` file and call it `wolfram.config
 Open Futon and create a new `database`. Give it the name you put in the configuration file.
 Second add a new user also matching your configurations, `username` and `password`.
 
-It can be a little frustrating to create users in couchdb, there is no create user button. You have to do it "manually" either by [script][3] or inserting a new document in the `_users` table with the required keys.
-
-    {
-      "_id": "org.couchdb.user:$ID",
-      "name": "$ID",
-      "roles": [],
-      "type": "user",
-      "password": "$PASSWORD"
-    }
-
 If you skiped the development section, here is a recap
 
     $git clone .....wolfram.git
